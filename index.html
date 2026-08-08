@@ -1,199 +1,282 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shorts AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shorts AI</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#111827;
+  color:white;
+  text-align:center;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-    }
+.container{
+  max-width:700px;
+  margin:auto;
+  padding:30px 15px;
+}
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 30px 20px;
-      text-align: center;
-    }
+h1{
+  font-size:32px;
+}
 
-    h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
+.card{
+  background:#1f2937;
+  padding:25px;
+  border-radius:18px;
+  margin-top:20px;
+}
 
-    .subtitle {
-      color: #cbd5e1;
-      margin-bottom: 30px;
-    }
+input{
+  margin:20px;
+  padding:12px;
+}
 
-    .card {
-      background: #1e293b;
-      border-radius: 20px;
-      padding: 30px;
-      margin-top: 25px;
-    }
+button{
+  background:#7c3aed;
+  color:white;
+  border:0;
+  padding:14px 25px;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+}
 
-    input[type="file"] {
-      width: 100%;
-      padding: 15px;
-      background: #334155;
-      color: white;
-      border-radius: 12px;
-      margin: 15px 0;
-    }
+button:disabled{
+  opacity:.5;
+}
 
-    video {
-      width: 100%;
-      max-height: 500px;
-      margin-top: 20px;
-      border-radius: 15px;
-      background: black;
-    }
+video{
+  width:100%;
+  max-height:400px;
+  margin-top:20px;
+  border-radius:12px;
+}
 
-    button {
-      border: none;
-      padding: 14px 24px;
-      border-radius: 12px;
-      font-size: 16px;
-      cursor: pointer;
-      margin: 8px;
-    }
+#status{
+  margin:20px;
+  color:#c4b5fd;
+}
 
-    .primary {
-      background: #7c3aed;
-      color: white;
-    }
-
-    .secondary {
-      background: #334155;
-      color: white;
-    }
-
-    .status {
-      margin-top: 20px;
-      color: #cbd5e1;
-    }
-
-    .short-preview {
-      width: 260px;
-      aspect-ratio: 9 / 16;
-      margin: 20px auto;
-      background: #020617;
-      border-radius: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #94a3b8;
-    }
-  </style>
+a{
+  display:inline-block;
+  margin-top:20px;
+  color:white;
+  background:#16a34a;
+  padding:14px 25px;
+  border-radius:10px;
+  text-decoration:none;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <h1>🎬 Shorts AI</h1>
+<h1>🎬 Shorts AI</h1>
+<p>Long Video → Vertical Short</p>
 
-    <p class="subtitle">
-      Long Video → Short Video
-    </p>
+<div class="card">
 
-    <div class="card">
+<h2>अपना वीडियो चुनें</h2>
 
-      <h2>अपना वीडियो चुनें</h2>
+<input type="file" id="fileInput" accept="video/*">
 
-      <input
-        type="file"
-        id="videoInput"
-        accept="video/*"
-      >
+<video id="video" controls style="display:none"></video>
 
-      <video
-        id="videoPreview"
-        controls
-        style="display:none;"
-      ></video>
+<br>
 
-      <div>
-        <button
-          class="primary"
-          id="analyzeBtn"
-          disabled
-        >
-          🤖 Analyze Video
-        </button>
-      </div>
+<button id="createBtn" disabled>
+Create 9:16 Short
+</button>
 
-      <div class="status" id="status">
-        पहले वीडियो चुनें।
-      </div>
+<div id="status"></div>
 
-    </div>
+<a id="download" style="display:none">
+⬇️ Short Download करें
+</a>
 
-    <div class="card" id="resultCard" style="display:none;">
+</div>
 
-      <h2>📱 9:16 Short Preview</h2>
+</div>
 
-      <div class="short-preview">
-        Short Preview
-      </div>
+<script>
 
-      <button class="primary">
-        ✂️ Create Short
-      </button>
+const fileInput = document.getElementById("fileInput");
+const video = document.getElementById("video");
+const createBtn = document.getElementById("createBtn");
+const status = document.getElementById("status");
+const download = document.getElementById("download");
 
-      <button class="secondary">
-        ⬇️ Download
-      </button>
+let videoURL = "";
 
-    </div>
+fileInput.addEventListener("change", function(){
 
-  </div>
+    const file = this.files[0];
 
-  <script>
+    if(!file){
+        return;
+    }
 
-    const videoInput = document.getElementById("videoInput");
-    const videoPreview = document.getElementById("videoPreview");
-    const analyzeBtn = document.getElementById("analyzeBtn");
-    const status = document.getElementById("status");
-    const resultCard = document.getElementById("resultCard");
+    videoURL = URL.createObjectURL(file);
 
-    videoInput.addEventListener("change", function () {
+    video.src = videoURL;
+    video.style.display = "block";
 
-      const file = this.files[0];
+    createBtn.disabled = false;
 
-      if (!file) return;
+    status.textContent = "वीडियो तैयार है ✅";
 
-      const videoURL = URL.createObjectURL(file);
+});
 
-      videoPreview.src = videoURL;
-      videoPreview.style.display = "block";
+createBtn.addEventListener("click", async function(){
 
-      analyzeBtn.disabled = false;
+    createBtn.disabled = true;
+    download.style.display = "none";
 
-      status.textContent =
-        "वीडियो तैयार है। Analyze Video दबाएँ।";
+    status.textContent =
+    "9:16 Short बनाया जा रहा है... कृपया इंतज़ार करें ⏳";
+
+    video.currentTime = 0;
+
+    await new Promise(resolve => {
+
+        if(video.readyState >= 2){
+            resolve();
+        }else{
+            video.onloadeddata = resolve;
+        }
 
     });
 
-    analyzeBtn.addEventListener("click", function () {
+    const canvas = document.createElement("canvas");
 
-      status.textContent =
-        "वीडियो analyze करने की तैयारी हो रही है...";
+    canvas.width = 720;
+    canvas.height = 1280;
 
-      resultCard.style.display = "block";
+    const ctx = canvas.getContext("2d");
 
-    });
+    const stream = canvas.captureStream(30);
 
-  </script>
+    let recorder;
+
+    try{
+
+        recorder = new MediaRecorder(stream,{
+            mimeType:"video/webm;codecs=vp9"
+        });
+
+    }catch(e){
+
+        recorder = new MediaRecorder(stream);
+
+    }
+
+    const chunks = [];
+
+    recorder.ondataavailable = e => {
+
+        if(e.data.size > 0){
+            chunks.push(e.data);
+        }
+
+    };
+
+    recorder.onstop = () => {
+
+        const blob = new Blob(chunks,{
+            type:"video/webm"
+        });
+
+        const url = URL.createObjectURL(blob);
+
+        download.href = url;
+        download.download = "shorts-ai-short.webm";
+        download.style.display = "inline-block";
+
+        status.textContent =
+        "🎉 आपका 9:16 Short तैयार है!";
+
+        createBtn.disabled = false;
+
+    };
+
+    recorder.start();
+
+    video.currentTime = 0;
+
+    video.play();
+
+    const maxDuration = Math.min(video.duration,60);
+
+    const startTime = performance.now();
+
+    function draw(){
+
+        if(recorder.state === "inactive"){
+            return;
+        }
+
+        const elapsed =
+        (performance.now() - startTime) / 1000;
+
+        if(elapsed >= maxDuration){
+
+            video.pause();
+            recorder.stop();
+
+            return;
+        }
+
+        const vw = video.videoWidth;
+        const vh = video.videoHeight;
+
+        const targetRatio = 9/16;
+        const videoRatio = vw/vh;
+
+        let sx,sy,sw,sh;
+
+        if(videoRatio > targetRatio){
+
+            sh = vh;
+            sw = vh * targetRatio;
+
+            sx = (vw-sw)/2;
+            sy = 0;
+
+        }else{
+
+            sw = vw;
+            sh = vw / targetRatio;
+
+            sx = 0;
+            sy = (vh-sh)/2;
+
+        }
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(0,0,720,1280);
+
+        ctx.drawImage(
+            video,
+            sx,sy,sw,sh,
+            0,0,720,1280
+        );
+
+        requestAnimationFrame(draw);
+
+    }
+
+    draw();
+
+});
+
+</script>
 
 </body>
 </html>
