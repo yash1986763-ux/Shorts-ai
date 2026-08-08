@@ -1,1 +1,199 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shorts AI</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: #1e293b;
+      border-radius: 20px;
+      padding: 30px;
+      margin-top: 25px;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 15px;
+      background: #334155;
+      color: white;
+      border-radius: 12px;
+      margin: 15px 0;
+    }
+
+    video {
+      width: 100%;
+      max-height: 500px;
+      margin-top: 20px;
+      border-radius: 15px;
+      background: black;
+    }
+
+    button {
+      border: none;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 8px;
+    }
+
+    .primary {
+      background: #7c3aed;
+      color: white;
+    }
+
+    .secondary {
+      background: #334155;
+      color: white;
+    }
+
+    .status {
+      margin-top: 20px;
+      color: #cbd5e1;
+    }
+
+    .short-preview {
+      width: 260px;
+      aspect-ratio: 9 / 16;
+      margin: 20px auto;
+      background: #020617;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>🎬 Shorts AI</h1>
+
+    <p class="subtitle">
+      Long Video → Short Video
+    </p>
+
+    <div class="card">
+
+      <h2>अपना वीडियो चुनें</h2>
+
+      <input
+        type="file"
+        id="videoInput"
+        accept="video/*"
+      >
+
+      <video
+        id="videoPreview"
+        controls
+        style="display:none;"
+      ></video>
+
+      <div>
+        <button
+          class="primary"
+          id="analyzeBtn"
+          disabled
+        >
+          🤖 Analyze Video
+        </button>
+      </div>
+
+      <div class="status" id="status">
+        पहले वीडियो चुनें।
+      </div>
+
+    </div>
+
+    <div class="card" id="resultCard" style="display:none;">
+
+      <h2>📱 9:16 Short Preview</h2>
+
+      <div class="short-preview">
+        Short Preview
+      </div>
+
+      <button class="primary">
+        ✂️ Create Short
+      </button>
+
+      <button class="secondary">
+        ⬇️ Download
+      </button>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    const videoInput = document.getElementById("videoInput");
+    const videoPreview = document.getElementById("videoPreview");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const status = document.getElementById("status");
+    const resultCard = document.getElementById("resultCard");
+
+    videoInput.addEventListener("change", function () {
+
+      const file = this.files[0];
+
+      if (!file) return;
+
+      const videoURL = URL.createObjectURL(file);
+
+      videoPreview.src = videoURL;
+      videoPreview.style.display = "block";
+
+      analyzeBtn.disabled = false;
+
+      status.textContent =
+        "वीडियो तैयार है। Analyze Video दबाएँ।";
+
+    });
+
+    analyzeBtn.addEventListener("click", function () {
+
+      status.textContent =
+        "वीडियो analyze करने की तैयारी हो रही है...";
+
+      resultCard.style.display = "block";
+
+    });
+
+  </script>
+
+</body>
+</html>
